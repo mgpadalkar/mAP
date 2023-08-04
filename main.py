@@ -19,7 +19,12 @@ parser.add_argument('-q', '--quiet', help="minimalistic console output.", action
 parser.add_argument('-i', '--ignore', nargs='+', type=str, help="ignore a list of classes.")
 # argparse receiving list of classes with specific IoU (e.g., python main.py --set-class-iou person 0.7)
 parser.add_argument('--set-class-iou', nargs='+', type=str, help="set IoU for a specific class.")
+parser.add_argument('-gt', '--ground-truth', type=str, default='input/ground-truth', help="ground-truth directory")
+parser.add_argument('-dr', '--detection-results', type=str, default='input/detection-results', help="detection-results directory")
+parser.add_argument('-o', '--images-optional', type=str, default='input/images-optional', help="images-optional directory")
+parser.add_argument('-rs', '--output', type=str, default='output', help="output directory")
 args = parser.parse_args()
+
 
 '''
     0,0 ------> x (width)
@@ -44,10 +49,10 @@ if args.set_class_iou is not None:
 # make sure that the cwd() is the location of the python script (so that every path makes sense)
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-GT_PATH = os.path.join(os.getcwd(), 'input', 'ground-truth')
-DR_PATH = os.path.join(os.getcwd(), 'input', 'detection-results')
+GT_PATH = args.ground_truth # os.path.join(os.getcwd(), 'input', 'ground-truth')
+DR_PATH = args.detection_results # os.path.join(os.getcwd(), 'input', 'detection-results')
 # if there are no images then no animation can be shown
-IMG_PATH = os.path.join(os.getcwd(), 'input', 'images-optional')
+IMG_PATH = args.images_optional # os.path.join(os.getcwd(), 'input', 'images-optional')
 if os.path.exists(IMG_PATH): 
     for dirpath, dirnames, files in os.walk(IMG_PATH):
         if not files:
@@ -295,7 +300,7 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
             if i == (len(sorted_values)-1): # largest bar
                 adjust_axes(r, t, fig, axes)
     # set window title
-    fig.canvas.set_window_title(window_title)
+    fig.canvas.manager.set_window_title(window_title)
     # write classes in y axis
     tick_font_size = 12
     plt.yticks(range(n_classes), sorted_keys, fontsize=tick_font_size)
@@ -336,7 +341,7 @@ def draw_plot_func(dictionary, n_classes, window_title, plot_title, x_label, out
 TEMP_FILES_PATH = ".temp_files"
 if not os.path.exists(TEMP_FILES_PATH): # if it doesn't exist already
     os.makedirs(TEMP_FILES_PATH)
-output_files_path = "output"
+output_files_path = args.output # "output"
 if os.path.exists(output_files_path): # if it exist already
     # reset the output directory
     shutil.rmtree(output_files_path)
@@ -644,6 +649,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
                 cv2.rectangle(img_cumulative,(bb[0],bb[1]),(bb[2],bb[3]),color,2)
                 cv2.putText(img_cumulative, class_name, (bb[0],bb[1] - 5), font, 0.6, color, 1, cv2.LINE_AA)
                 # show image
+                cv2.namedWindow("Animation", cv2.WINDOW_NORMAL)
                 cv2.imshow("Animation", img)
                 cv2.waitKey(20) # show for 20 ms
                 # save image to output
@@ -701,7 +707,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
             plt.fill_between(area_under_curve_x, 0, area_under_curve_y, alpha=0.2, edgecolor='r')
             # set window title
             fig = plt.gcf() # gcf - get current figure
-            fig.canvas.set_window_title('AP ' + class_name)
+            fig.canvas.manager.set_window_title('AP ' + class_name)
             # set plot title
             plt.title('class: ' + text)
             #plt.suptitle('This is a somewhat long figure title', fontsize=16)
@@ -722,6 +728,7 @@ with open(output_files_path + "/output.txt", 'w') as output_file:
 
     if show_animation:
         cv2.destroyAllWindows()
+
 
     output_file.write("\n# mAP of all classes\n")
     mAP = sum_AP / n_classes
@@ -888,7 +895,7 @@ if draw_plot:
     plot_title = "mAP = {0:.2f}%".format(mAP*100)
     x_label = "Average Precision"
     output_path = output_files_path + "/mAP.png"
-    to_show = True
+    to_show = False # True
     plot_color = 'royalblue'
     draw_plot_func(
         ap_dictionary,

@@ -2,6 +2,12 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/Cartucho/mAP.svg?style=social&label=Stars)](https://github.com/Cartucho/mAP)
 
+**Forked from [https://github.com/Cartucho/mAP](https://github.com/Cartucho/mAP) to save performance of multiple models to a single csv file.**
+- Added the script [gen_mAP.sh](./gen_mAP.sh) for this purpose
+- Added command-line options to provide the `detection-results`, `ground-truth`, `images-optional`, `output` paths.
+- Disabled showing the plots (but it does save them)
+
+
 This code will evaluate the performance of your neural net for object recognition.
 
 <p align="center">
@@ -79,7 +85,7 @@ Optional:
 To start using the mAP you need to clone the repo:
 
 ```
-git clone https://github.com/Cartucho/mAP
+git clone https://github.com/mgpadalkar/mAP
 ```
 
 ## Running the code
@@ -102,7 +108,7 @@ Optional (if you want to see the **animation**):
 
 #### PASCAL VOC, Darkflow and YOLO users
 
-In the [scripts/extra](https://github.com/Cartucho/mAP/tree/master/scripts/extra) folder you can find additional scripts to convert **PASCAL VOC**, **darkflow** and **YOLO** files into the required format.
+In the [scripts/extra](./scripts/extra) folder you can find additional scripts to convert **PASCAL VOC**, **darkflow** and **YOLO** files into the required format.
 
 #### Create the ground-truth files
 
