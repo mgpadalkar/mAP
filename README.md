@@ -6,6 +6,7 @@
 - Added the script [gen_mAP.sh](./gen_mAP.sh) for this purpose
 - Added command-line options to provide the `detection-results`, `ground-truth`, `images-optional`, `output` paths.
 - Disabled showing the plots (but it does save them)
+- Changed paths that caused errors due to file extension.
 
 
 This code will evaluate the performance of your neural net for object recognition.

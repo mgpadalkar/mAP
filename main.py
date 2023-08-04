@@ -46,8 +46,8 @@ specific_iou_flagged = False
 if args.set_class_iou is not None:
     specific_iou_flagged = True
 
-# make sure that the cwd() is the location of the python script (so that every path makes sense)
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+# # make sure that the cwd() is the location of the python script (so that every path makes sense)
+# os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 GT_PATH = args.ground_truth # os.path.join(os.getcwd(), 'input', 'ground-truth')
 DR_PATH = args.detection_results # os.path.join(os.getcwd(), 'input', 'detection-results')
@@ -748,9 +748,13 @@ if show_animation:
         start = TEMP_FILES_PATH + '/'
         img_id = tmp_file[tmp_file.find(start)+len(start):tmp_file.rfind('_ground_truth.json')]
         img_cumulative_path = output_files_path + "/images/" + img_id + ".jpg"
-        img = cv2.imread(img_cumulative_path)
-        if img is None:
-            img_path = IMG_PATH + '/' + img_id + ".jpg"
+        if os.path.isfile(img_cumulative_path):
+            img = cv2.imread(img_cumulative_path)
+        else:
+        # if img is None:
+            # img_path = IMG_PATH + '/' + img_id + ".jpg"
+            available_paths = glob.glob1(IMG_PATH, img_id + ".*")
+            img_path = IMG_PATH + '/' + available_paths[0]
             img = cv2.imread(img_path)
         # draw false negatives
         for obj in ground_truth_data:
